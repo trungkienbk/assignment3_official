@@ -6,4 +6,5 @@ ASSIGN c 'acb'
 ASSIGN x 1
 PRINT
 ASSIGN c y(x,1,2)
+CALL y(c,1,2)
 PRINT

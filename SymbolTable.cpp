@@ -142,8 +142,8 @@ string SymbolTable::encodeName(string name, int cur_level) {
 void SymbolTable::print(string &s) {
     for (int i = 0; i < newHash.size ; i++) {
         if (newHash.status[i] == 1) {
-           // s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +";";
-            s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +"_"+newHash.arr[i].type +"_"+newHash.arr[i].argList+" ;";
+            s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +";";
+            //s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +"_"+newHash.arr[i].type +"_"+newHash.arr[i].argList+" ;";
         }
     }
 }
@@ -359,7 +359,7 @@ void SymbolTable::assign_variable(string ins,int cur_level) {
     }
 }
 
-void SymbolTable::check_function(string ins,string value_func, int cur_level, int idx, int &num_step) {
+void SymbolTable::check_function(string ins,string value_func,int cur_level,int idx,int& num_step,int& idx_func_real) {
     string func_name,argu;
     int count_point = 0;
     int index_par[40];
@@ -367,6 +367,7 @@ void SymbolTable::check_function(string ins,string value_func, int cur_level, in
     func_name = value_func.substr(0,find_parless); //// Name of function
     argu = value_func.substr(find_parless); //// list argument; ex: (1,'234)
     Symbol temp_func = search(func_name,cur_level,idx,num_step);
+    idx_func_real = idx;
     if(temp_func.name == "null"){
         throw Undeclared(func_name);
     }
@@ -479,10 +480,10 @@ void SymbolTable::assign_function(string ins, int cur_level) {
 
     check_function(ins,value_func,cur_level,idx_func_fake,num_step,idx_func);
     Symbol check_id = search(id,cur_level,idx_var,num_step);
-    cout<<"indexx ne " << "func : "<<idx_func<<"_"<<newHash.arr[idx_func].name<<"      var : "<<idx_var<<"_"<<newHash.arr[idx_var].name<<endl;
+   // cout<<"indexx ne " << "func : "<<idx_func<<"_"<<newHash.arr[idx_func].name<<"      var : "<<idx_var<<"_"<<newHash.arr[idx_var].name<<endl;
     if(check_id.name == "null") throw Undeclared(id);
     if(check_id.argList !="") throw TypeMismatch(ins);
-   /* if(newHash.arr[idx_var].type == "" && newHash.arr[idx_func].type == ""){
+    if(newHash.arr[idx_var].type == "" && newHash.arr[idx_func].type == ""){
         throw TypeCannotBeInfered(ins);
     }
     if(newHash.arr[idx_var].type == "" && newHash.arr[idx_func].type == "void"){
@@ -492,7 +493,7 @@ void SymbolTable::assign_function(string ins, int cur_level) {
         if(newHash.arr[idx_var].type !=newHash.arr[idx_func].type )
         throw TypeMismatch(ins);
     }
-    */
+
     if(newHash.arr[idx_var].type == "" && newHash.arr[idx_func].type != ""){
         newHash.arr[idx_var].type=newHash.arr[idx_func].type;
     }
