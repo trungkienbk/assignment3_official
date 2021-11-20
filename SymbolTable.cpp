@@ -23,10 +23,10 @@ void SymbolTable::run(string filename)
             insert_func(ins,cur_level);
         }
         else if (regex_match(ins, ass_val)){ //// HAM ASSIGN VALUE
-            cout<<"ASSIGN VALUE OK"<<endl;
+            assign_value(ins,cur_level);
         }
         else if(regex_match(ins, ass_vari)){ //// HAM ASSIGN VARIABLE
-            cout<<"ASSIGN VARIABLE OK"<<endl;
+            assign_variable(ins,cur_level);
         }
         else if(regex_match(ins,ass_func)){ //// HAM ASSIGN HAM
             cout<<"ASSIGN HAM OK"<<endl;
@@ -142,7 +142,8 @@ string SymbolTable::encodeName(string name, int cur_level) {
 void SymbolTable::print(string &s) {
     for (int i = 0; i < newHash.size ; i++) {
         if (newHash.status[i] == 1) {
-            s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +";";
+            //s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +";";
+            s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +newHash.arr[i].type +" ;";
         }
     }
 }
@@ -165,7 +166,8 @@ void SymbolTable::insert_val(string ins, int cur_level) {
     Symbol e(name,cur_level);
     e.encode = encodeName(name,cur_level);
     Symbol check = isContains(e,cur_level);
-    if(check.name != "null") throw Redeclared(ins);
+    //if(check.name != "null") throw Redeclared(ins);
+    if(check.name != "null") throw Redeclared(name);
     //  cout<<" thuoc tinh  : c1->"<<c1<<" c2->"<<c2<<" m(size) ->"<<m<<endl;
     for(int i = 0 ; i < newHash.size ; ++i){
         int k = newHash.hp(e.encode,i,c1,c2,m);
@@ -193,7 +195,7 @@ void SymbolTable::lookup(string ins, int cur_level) {
         if(check.name !="null") break;
         cur_level--;
     }
-    if(check.name =="null") throw Undeclared(ins);
+    if(check.name =="null") throw Undeclared(name);
     cout<<check.index<<endl;
 }
 
@@ -227,7 +229,10 @@ void SymbolTable::insert_func(string ins, int cur_level) {
     Symbol e(name,cur_level);
     e.encode = encodeName(name,cur_level);
     Symbol check = isContains(e,cur_level);
-    if(check.name != "null") throw Redeclared(ins);
+    if(check.name != "null") throw Redeclared(name);
+    if(cur_level > 0) throw InvalidDeclaration(name);
+    //if(check.name != "null") throw Redeclared(ins);
+   // if(cur_level > 0) throw InvalidDeclaration(ins);
     //  cout<<" thuoc tinh  : c1->"<<c1<<" c2->"<<c2<<" m(size) ->"<<m<<endl;
     for(int i = 0 ; i < newHash.size ; ++i){
         int k = newHash.hp(e.encode,i,c1,c2,m);
@@ -238,8 +243,106 @@ void SymbolTable::insert_func(string ins, int cur_level) {
             newHash.arr[k].index=k;
             newHash.arr[k].argList = argList_tmp;
             cout<<i<<endl;
+           // cout<<"Test count N of "+newHash.arr[k].name<<" "<<newHash.arr[k].argList<<endl;
             return;
         }
     }
     throw Overflow(ins);
+}
+
+void SymbolTable::call_func(string ins) {
+
+}
+
+void SymbolTable::assign_value(string ins, int cur_level) {
+    string name,valu,value_type;
+    int idx = 0;
+    int num_step = 0;
+    int index[2]={0,0};
+    int j = 0;
+    for(int i=0;i<(int)ins.size();++i){
+        if(j==2) break;
+        if(ins[i]==' '){
+            index[j]=i;
+            j++;
+        }
+    }
+    name = ins.substr(index[0]+1,index[1]-index[0]-1);
+    valu = ins.substr(index[1]+1);
+    if(valu[0]=='\'') value_type = "string";
+    else value_type = "number";
+    Symbol e(name,cur_level);
+    e.encode = encodeName(name,cur_level);
+    Symbol check = search(name,cur_level,idx,num_step);
+    if(check.name == "null") throw Undeclared(name);
+    if(check.type == "void") throw TypeMismatch(ins);
+    if(check.argList != "") throw TypeMismatch(ins);
+    if(check.type == ""){
+        newHash.arr[idx].type = value_type;
+        cout<<num_step<<endl;
+        return;
+    } else {
+        if(check.type != value_type){
+            throw TypeMismatch(ins);
+        }
+        cout<<num_step<<endl;
+        return;
+    }
+}
+Symbol SymbolTable::search(string name, int cur_level, int& idx, int& num_step) {
+    while(cur_level >= 0){
+      //  num_step= 0;
+        string key = encodeName(name,cur_level);
+        for (int i = 0; i < newHash.size; i++){
+            int k = newHash.hp(key, i, c1, c2, m);
+            if (newHash.arr[k].encode == key && newHash.status[k] == 1){
+                idx = k;
+                return newHash.arr[k];
+            }
+            num_step++;
+        }
+        cur_level--;
+    }
+    return Symbol("null",-1);
+}
+
+void SymbolTable::assign_variable(string ins,int cur_level) {
+    string id,value;
+    int num_step = 0;
+    int idx_val,idx_id;
+    int index[2]={0,0};
+    int j = 0;
+    for(int i=0;i<(int)ins.size();++i){
+        if(j==2) break;
+        if(ins[i]==' '){
+            index[j]=i;
+            j++;
+        }
+    }
+    id = ins.substr(index[0]+1,index[1]-index[0]-1);
+    value = ins.substr(index[1]+1);
+    Symbol check_val = search(value,cur_level,idx_val,num_step);
+    if(check_val.name == "null") throw Undeclared(value);
+    if(check_val.argList != "") throw TypeMismatch(ins);
+    Symbol check_id = search(id,cur_level,idx_id,num_step);
+    if(check_id.name == "null") throw Undeclared(id);
+    if(check_id.argList != "") throw TypeMismatch(ins);
+    if(check_id.type == "" && check_val.type == "") throw TypeCannotBeInfered(ins);
+    if(check_id.type != "" && check_val.type != ""){
+        if(check_id.type != check_val.type) throw TypeMismatch(ins);
+        else{
+            cout<<num_step<<endl;
+        }
+        return;
+    }
+    if(check_id.type != "" && check_val.type == ""){
+        newHash.arr[idx_val].type = newHash.arr[idx_id].type;
+        cout<<num_step<<endl;
+        return;
+    }
+    if(check_id.type == "" && check_val.type != ""){
+        newHash.arr[idx_id].type = newHash.arr[idx_val].type;
+        cout<<num_step<<endl;
+        return;
+    }
 }

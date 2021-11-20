@@ -1,4 +1,15 @@
+Case1: INPUT
+#######################
 LINEAR 19 1
 INSERT x
 INSERT y
-INSERT x
+INSERT z 2
+ASSIGN x 123
+ASSIGN z 3
+PRINT
+ASSIGN x 'abc'
+PRINT
+-----------------------
+#######################
+
+assgin ham, ko bien, co bien, check thu tu danh sach bien

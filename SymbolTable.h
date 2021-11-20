@@ -80,12 +80,16 @@ public:
     void setQuadratic(string ins);
     void setDouble(string ins);
     string encodeName(string name,int cur_level);
-    Symbol isContains(Symbol e,int cur_level);
+    Symbol isContains(Symbol e,int cur_level); // using only for insert,lookup
     void print(string &s);
     void insert_val(string ins,int cur_level);
     void lookup(string ins,int cur_level);
     void remove(int cur_level);
     void insert_func(string ins,int cur_level);
+    void call_func(string ins);
+    Symbol search(string name,int cur_level,int &idx,int &num_step); //using for all expect insert , lookup
+    void assign_value(string ins,int cur_level);
+    void assign_variable(string ins,int cur_level);
 };
 regex linear("LINEAR [0-9]+ [0-9]+");
 regex quadratic("QUADRATIC [0-9]+ [0-9]+ [0-9]+");
