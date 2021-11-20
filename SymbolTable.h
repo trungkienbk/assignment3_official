@@ -86,10 +86,12 @@ public:
     void lookup(string ins,int cur_level);
     void remove(int cur_level);
     void insert_func(string ins,int cur_level);
-    void call_func(string ins);
+    void call_func(string ins,int cur_level);
     Symbol search(string name,int cur_level,int &idx,int &num_step); //using for all expect insert , lookup
     void assign_value(string ins,int cur_level);
     void assign_variable(string ins,int cur_level);
+    void check_function(string ins,string value_func,int cur_level,int idx,int& num_step,int& idx_func_real);
+    void assign_function(string ins,int cur_level);
 };
 regex linear("LINEAR [0-9]+ [0-9]+");
 regex quadratic("QUADRATIC [0-9]+ [0-9]+ [0-9]+");

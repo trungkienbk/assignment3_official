@@ -1,14 +1,14 @@
 Case1: INPUT
-#######################
 LINEAR 19 1
 INSERT x
-INSERT y
-INSERT z 2
-ASSIGN x 123
-ASSIGN z 3
-PRINT
-ASSIGN x 'abc'
-PRINT
+INSERT y 2
+ASSIGN x y('con','ca')
+-----------------------
+Case2: Thu tu check trong call
+LINEAR 19 1
+INSERT x
+INSERT y 2
+ASSIGN x y('con','ca')
 -----------------------
 #######################
 
