@@ -253,15 +253,15 @@ void SymbolTable::insert_func(string ins, int cur_level) {
 void SymbolTable::call_func(string ins,int cur_level) {
     int idx = 0;
     int num_step = 0;
-    int n = 1;
+    int idx_real;
     string value_func,func_name,argu;
     int space = ins.find(' ');
     value_func = ins.substr(space+1);
-    check_function(ins,value_func, cur_level,idx,num_step,n);
-    if(newHash.arr[idx].type != ""){
+    check_function(ins,value_func, cur_level,idx,num_step,idx_real);
+    if(newHash.arr[idx_real].type != ""){
         throw TypeMismatch(ins);
     } else {
-        newHash.arr[idx].type = "void";
+        newHash.arr[idx_real].type = "void";
     }
     cout<<num_step<<endl;
 }
@@ -303,7 +303,7 @@ void SymbolTable::assign_value(string ins, int cur_level) {
 }
 Symbol SymbolTable::search(string name, int cur_level, int& idx, int& num_step) {
     while(cur_level >= 0){
-      //  num_step= 0;
+        num_step= 0;
         string key = encodeName(name,cur_level);
         for (int i = 0; i < newHash.size; i++){
             int k = newHash.hp(key, i, c1, c2, m);
@@ -483,6 +483,7 @@ void SymbolTable::assign_function(string ins, int cur_level) {
    // cout<<"indexx ne " << "func : "<<idx_func<<"_"<<newHash.arr[idx_func].name<<"      var : "<<idx_var<<"_"<<newHash.arr[idx_var].name<<endl;
     if(check_id.name == "null") throw Undeclared(id);
     if(check_id.argList !="") throw TypeMismatch(ins);
+
     if(newHash.arr[idx_var].type == "" && newHash.arr[idx_func].type == ""){
         throw TypeCannotBeInfered(ins);
     }

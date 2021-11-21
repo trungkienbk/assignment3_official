@@ -4,12 +4,84 @@ INSERT x
 INSERT y 2
 ASSIGN x y('con','ca')
 -----------------------
-Case2: Thu tu check trong call
+Case2:
 LINEAR 19 1
 INSERT x
 INSERT y 2
 ASSIGN x y('con','ca')
 -----------------------
-#######################
+Case 3: Gan ham void
+LINEAR 19 1
+INSERT x 2
+INSERT y
+ASSIGN y 1
+INSERT z
+ASSIGN z 'cc'
+INSERT t
+CALL x(1,'abc')
+ASSIGN t x(y,z)
+-----------------------
+Case 4 : Case cua Dat
+LINEAR 19 1
+INSERT x 2
+INSERT y
+ASSIGN y 1
+INSERT z
+ASSIGN z 'cc'
+INSERT t
+ASSIGN z x(1,'abc')
+ASSIGN t x(44,z)
+-----------------------
+Case 5 : Ten ham trung ten bien
+LINEAR 19 1
+INSERT x 2
+INSERT y
+BEGIN
+INSERT x
+ASSIGN x 1
+ASSIGN y 'abc'
+ASSIGN x x(x,y)
+PRINT
+END
+ASSIGN x x(x,y)
+PRINT
+-----------------------
+Case 6 : key word
+LINEAR 19 1
+INSERT x 2
+CALL x(1,string)
+-----------------------
+Case 7 :
+LINEAR 19 1
+INSERT x 0
+CALL x()
+-----------------------
+Case 8 :
+LINEAR 19 1
+INSERT x 0
+BEGIN
+INSERT x 1
+CALL x()
+END
+-----------------------
+Case 9 :
+LINEAR 19 1
+INSERT x
+ASSIGN x 102
+ASSIGN y 10
+ASSIGN x y(x,x,x,x,x,x,x,x,x,x)
+END
+-----------------------
+Case 10 :
+LINEAR 19 1
+INSERT x
+ASSIGN x 102
+INSERT y 10
+ASSIGN x y(x,x,x,x,x,x,x,x,x,x)
+END
+-----------------------
+Case 11 :
+LINEAR 19 1
+INSERT x 2
+ASSIGN x x(1,2
 
-assgin ham, ko bien, co bien, check thu tu danh sach bien
