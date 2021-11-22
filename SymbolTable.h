@@ -75,10 +75,10 @@ public:
     }
     ~SymbolTable(){}
     void run(string filename);
-    void setAttribute(int c1_linear, int c2_linear, int m_linear);
-    void setLinear(string ins);
-    void setQuadratic(string ins);
-    void setDouble(string ins);
+    void SetAttribute(int c1_linear, int c2_linear, int m_linear);
+    void SetLinear(string ins);
+    void SetQuadratic(string ins);
+    void SetDouble(string ins);
     string encodeName(string name,int cur_level);
     Symbol isContains(Symbol e,int cur_level); // using only for insert,lookup
     void print(string &s);

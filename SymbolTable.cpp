@@ -8,13 +8,13 @@ void SymbolTable::run(string filename)
         string ins;
         getline(f, ins);
         if(regex_match(ins,linear)){
-           setLinear(ins);
+           SetLinear(ins);
         }
         else if(regex_match(ins,quadratic)){
-          setQuadratic(ins);
+          SetQuadratic(ins);
         }
         else if(regex_match(ins,doublee)){
-           setDouble(ins);
+           SetDouble(ins);
         }
         else if(regex_match(ins,ins_vari)) {     ///// HAM INSERT BIEN
            insert_val(ins,cur_level);
@@ -61,7 +61,7 @@ void SymbolTable::run(string filename)
     }
     f.close();
 }
-void SymbolTable::setLinear(string ins) {
+void SymbolTable::SetLinear(string ins) {
     int c1_linear= 1;
     int c2_linear= 0;
     int m_linear= 1;
@@ -76,10 +76,10 @@ void SymbolTable::setLinear(string ins) {
     }
     m_linear = stoi(ins.substr(index[0]+1,index[1]-index[0]-1));
     c1_linear = stoi(ins.substr(index[1]+1));
-    this->setAttribute(c1_linear,c2_linear,m_linear);
+    this->SetAttribute(c1_linear,c2_linear,m_linear);
     newHash.hp = linearProbing;
 }
-void SymbolTable::setQuadratic(string ins) {
+void SymbolTable::SetQuadratic(string ins) {
     int c1_linear;
     int c2_linear;
     int m_linear;
@@ -95,16 +95,16 @@ void SymbolTable::setQuadratic(string ins) {
     m_linear = stoi(ins.substr(index[0]+1,index[1]-index[0]-1));
     c1_linear = stoi(ins.substr(index[1]+1,index[2]-index[1]-1));
     c2_linear = stoi(ins.substr(index[2]+1));
-    setAttribute(c1_linear,c2_linear,m_linear);
+    SetAttribute(c1_linear,c2_linear,m_linear);
     newHash.hp = quadraticProbing;
     //  cout<<"Check m,c1,c2 " <<m_linear << this->m
     // << " -- "<<c1_linear << this->c1 << " -- "<<c2_linear << this->c2;
 }
-void SymbolTable::setDouble(string ins) {
+void SymbolTable::SetDouble(string ins) {
     int c1_linear;
-    int c2_linear;
+    int c2_linear =1;
     int m_linear;
-    int count = 0;
+   // int count = 0;
     int index[2]={0,0};
     int j = 0;
     for(int i=0;i<(int)ins.size();++i){
@@ -116,10 +116,10 @@ void SymbolTable::setDouble(string ins) {
     }
     m_linear = stoi(ins.substr(index[0]+1,index[1]-index[0]-1));
     c1_linear = stoi(ins.substr(index[1]+1));
-    this->setAttribute(c1_linear,c2_linear,m_linear);
+    this->SetAttribute(c1_linear,c2_linear,m_linear);
     newHash.hp = doubleHashing;
 }
-void SymbolTable::setAttribute(int c1_linear, int c2_linear, int m_linear) {
+void SymbolTable::SetAttribute(int c1_linear, int c2_linear, int m_linear) {
     this->c1 = c1_linear;
     this->c2 = c2_linear;
     this->m = m_linear;
@@ -133,7 +133,7 @@ void SymbolTable::setAttribute(int c1_linear, int c2_linear, int m_linear) {
 
 string SymbolTable::encodeName(string name, int cur_level) {
     string res = to_string(cur_level);
-    for(int i = 0 ; i < name.length();++i){
+    for(int i = 0 ; i <(int) name.length();++i){
         res+=to_string(name[i]-48);
     }
     return res;
@@ -365,7 +365,7 @@ void SymbolTable::check_function(string ins,string value_func,int cur_level,int 
     int index_par[40];
     int find_parless = (int)value_func.find('(');
     func_name = value_func.substr(0,find_parless); //// Name of function
-    argu = value_func.substr(find_parless); //// list argument; ex: (1,'234)
+    argu = value_func.substr(find_parless); //// List argument; ex: (1,'234)
     Symbol temp_func = search(func_name,cur_level,idx,num_step);
     idx_func_real = idx;
     if(temp_func.name == "null"){
