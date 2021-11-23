@@ -84,4 +84,23 @@ Case 11 :
 LINEAR 19 1
 INSERT x 2
 ASSIGN x x(1,2
+-----------------------
+Case 12 : // suy dien nguoc lai tu tham so ra bien
+LINEAR 19 1
+INSERT x
+INSERT xy
+INSERT f 4
+INSERT y
+ASSIGN y 2
+ASSIGN y f(1,1,1,1)
+ASSIGN y f(xy,xy,xy,x)
+ASSIGN x ''
+-----------------------
+Case 13 : // thu tu check void
+LINEAR 19 1
+INSERT x 2
+INSERT y
+ASSIGN y 1
+CALL x(1,1)
+ASSIGN y x(z,1)
 

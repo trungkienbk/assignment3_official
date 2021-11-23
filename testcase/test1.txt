@@ -1,4 +1,10 @@
-LINEAR 19 1
-INSERT a
-BEGIN
-INSERT a 5
+LINEAR 6 2
+INSERT kiensongnhuconcac
+INSERT kIENMAtlon
+INSERT kien2CM
+INSERT conchokien
+ASSIGN conchokien 'ditmemay'
+INSERT foo 12
+ASSIGN conchokien foo(1,1,1,1,1,1,1,1,1,'',1,1)
+ASSIGN a
+END

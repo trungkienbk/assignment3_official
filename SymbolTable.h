@@ -1,6 +1,7 @@
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
 #include "main.h"
+#include <sstream>
 using namespace std;
 ////////////////////////////////////////////////////////////
 static int customMod(string str, int m)
@@ -75,6 +76,8 @@ public:
     }
     ~SymbolTable(){}
     void run(string filename);
+    bool isValidId(string id);
+    bool isKeyword(const string& ins);
     void SetAttribute(int c1_linear, int c2_linear, int m_linear);
     void SetLinear(string ins);
     void SetQuadratic(string ins);
