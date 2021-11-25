@@ -17,7 +17,7 @@ static int customMod(string str, int m)
 static int linearProbing(string key, int i,int c1,int c2,int m) {
     int temp = customMod(key,m);
     return ( temp + c1*i) % m;
-   // return ((key % m) + c1*i) % m;
+    // return ((key % m) + c1*i) % m;
 }
 static int quadraticProbing(string  key, int i,int c1,int c2,int m) {
     int temp = customMod(key,m);

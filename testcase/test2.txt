@@ -83,7 +83,7 @@ END
 Case 11 :
 LINEAR 19 1
 INSERT x 2
-ASSIGN x x(1,2
+ASSIGN x x(1,2)
 -----------------------
 Case 12 : // suy dien nguoc lai tu tham so ra bien
 LINEAR 19 1
@@ -96,11 +96,65 @@ ASSIGN y f(1,1,1,1)
 ASSIGN y f(xy,xy,xy,x)
 ASSIGN x ''
 -----------------------
-Case 13 : // thu tu check void
+Case 13 : // thu tu check void // dang group
 LINEAR 19 1
 INSERT x 2
 INSERT y
 ASSIGN y 1
 CALL x(1,1)
 ASSIGN y x(z,1)
+-----------------------
+Case 14  :  redec hay invalid dec trc
+LINEAR 19 1
+BEGIN
+INSERT x
+INSERT x 2
+END
+-----------------------
+Case 15 :
+LINEAR 186 23
+INSERT tRXm 2
+BEGIN
+BEGIN
+INSERT tRXm
+BEGIN
+CALL tRXm(1,2)
+-----------------------
+Case 16 :       // suy dien ham ra bienm goi call 2 lan
+QUADRATIC 56 869 964
+INSERT nXsS 1
+CALL nXsS(688)
+PRINT
+BEGIN
+END
+PRINT
+INSERT h8
+CALL nXsS(h8)
+LOOKUP nXsS
+LOOKUP h8
+PRINT
+LOOKUP nXsS
+CALL h8()
+-----------------------
+Case 17 :
+QUADRATIC 56 869 964
+INSERT nXsSe3f32
+BEGIN
+INSERT nXsSe3f32
+LOOKUP nXsSe3f32
+END
+LOOKUP nXsSe3f32
+-----------------------
+Case 18 : test regex
+DOUBLE 319 463
+INSERT z 4
+CALL z('CH ',878,'y','uM')
+CALL z('Q',435,z,z)
+
+CASE 19 :
+DOUBLE 495 264
+BEGIN
+
+
+
 
