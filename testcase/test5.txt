@@ -1,10 +1,53 @@
-LINEAR 19 1
-INSERT x1
-INSERT y1
+Case 1 :
+LINEAR 2 1
 BEGIN
-INSERT x1
+INSERT x
+INSERT y
+INSERT z 1
+END
+-----------------------
+0
+0
+InvalidDeclaration: z
+-----------------------
+Case 2 :
+LINEAR 2 968
 BEGIN
-INSERT u7
-LOOKUP x1
+INSERT h
+INSERT ha
+INSERT h 2
 END
+-----------------------
+0
+0
+Redeclared: h
+-----------------------
+Case 3 :
+QUADRATIC 10 457 192
+INSERT jKvPc
+INSERT w 1
+INSERT wGXHt 3
+LOOKUP wGXHt
+LOOKUP w
+INSERT aI 1
+INSERT gU 3
 END
+ASSIGN jKvPc gU('QeP7D',987,wGXHt)
+-----------------------
+1
+0
+8
+0
+0
+0
+UnknownBlock
+-----------------------
+Case 4 :
+LINEAR 2 1
+BEGIN
+INSERT x
+INSERT x 2
+END
+-----------------------
+0
+Redeclared: x

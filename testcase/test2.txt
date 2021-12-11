@@ -1,16 +1,14 @@
-Case1: INPUT
+Case1:
 LINEAR 19 1
 INSERT x
 INSERT y 2
 ASSIGN x y('con','ca')
+######################
+0
+0
+TypeCannotBeInferred: ASSIGN x y('con','ca')
 -----------------------
-Case2:
-LINEAR 19 1
-INSERT x
-INSERT y 2
-ASSIGN x y('con','ca')
------------------------
-Case 3: Gan ham void
+Case 2: Gan ham void
 LINEAR 19 1
 INSERT x 2
 INSERT y
@@ -20,8 +18,17 @@ ASSIGN z 'cc'
 INSERT t
 CALL x(1,'abc')
 ASSIGN t x(y,z)
+######################
+0
+0
+0
+0
+0
+0
+0
+TypeMismatch: ASSIGN t x(y,z)
 -----------------------
-Case 4 : Case cua Dat
+Case 3 :
 LINEAR 19 1
 INSERT x 2
 INSERT y
@@ -31,8 +38,17 @@ ASSIGN z 'cc'
 INSERT t
 ASSIGN z x(1,'abc')
 ASSIGN t x(44,z)
+######################
+0
+0
+0
+0
+0
+0
+0
+0
 -----------------------
-Case 5 : Ten ham trung ten bien
+Case 4 : Ten ham trung ten bien
 LINEAR 19 1
 INSERT x 2
 INSERT y
@@ -45,45 +61,82 @@ PRINT
 END
 ASSIGN x x(x,y)
 PRINT
+######################
+0
+0
+0
+0
+0
+TypeMismatch: ASSIGN x x(x,y)
 -----------------------
-Case 6 : key word
+Case 5 : key word
 LINEAR 19 1
 INSERT x 2
-CALL x(1,string)
+ASSIGN x(1,string)
+######################
+0
+Invalid: ASSIGN x(1,string)
 -----------------------
-Case 7 :
+Case 6 : goi ham ko co bien
 LINEAR 19 1
 INSERT x 0
 CALL x()
+######################
+0
+0
 -----------------------
-Case 8 :
+Case 7 :
 LINEAR 19 1
 INSERT x 0
 BEGIN
 INSERT x 1
 CALL x()
 END
+######################
+0
+InvalidDeclaration: x
 -----------------------
-Case 9 :
+Case 8 :
 LINEAR 19 1
 INSERT x
 ASSIGN x 102
 ASSIGN y 10
 ASSIGN x y(x,x,x,x,x,x,x,x,x,x)
 END
+######################
+0
+0
+Undeclared: y
 -----------------------
-Case 10 :
+Case 9 :
 LINEAR 19 1
 INSERT x
 ASSIGN x 102
 INSERT y 10
 ASSIGN x y(x,x,x,x,x,x,x,x,x,x)
 END
+######################
+0
+0
+0
+0
+UnknownBlock
+-----------------------
+Case 10 :
+LINEAR 19 1
+BEGIN
+END
+END
+######################
+UnknownBlock
 -----------------------
 Case 11 :
 LINEAR 19 1
 INSERT x 2
 ASSIGN x x(1,2)
+######################
+0
+TypeMismatch: ASSIGN x x(1,2)
 -----------------------
 Case 12 : // suy dien nguoc lai tu tham so ra bien
 LINEAR 19 1
@@ -95,6 +148,15 @@ ASSIGN y 2
 ASSIGN y f(1,1,1,1)
 ASSIGN y f(xy,xy,xy,x)
 ASSIGN x ''
+######################
+0
+1
+1
+2
+2
+3
+6
+TypeMismatch: ASSIGN x ''
 -----------------------
 Case 13 : // thu tu check void // dang group
 LINEAR 19 1
@@ -103,8 +165,20 @@ INSERT y
 ASSIGN y 1
 CALL x(1,1)
 ASSIGN y x(z,1)
+######################
+0
+0
+0
+0
+Undeclared: z
 -----------------------
 Case 14  :  redec hay invalid dec trc
+LINEAR 2 1
+BEGIN
+INSERT x
+INSERT x 2
+END
+######################
 LINEAR 19 1
 BEGIN
 INSERT x
@@ -119,6 +193,10 @@ BEGIN
 INSERT tRXm
 BEGIN
 CALL tRXm(1,2)
+######################
+0
+0
+TypeMismatch: CALL tRXm(1,2)
 -----------------------
 Case 16 :       // suy dien ham ra bienm goi call 2 lan
 QUADRATIC 56 869 964
@@ -135,6 +213,18 @@ LOOKUP h8
 PRINT
 LOOKUP nXsS
 CALL h8()
+######################
+0
+0
+55 nXsS//0
+55 nXsS//0
+0
+0
+55
+8
+8 h8//0;55 nXsS//0
+55
+TypeMismatch: CALL h8()
 -----------------------
 Case 17 :
 QUADRATIC 56 869 964
@@ -144,17 +234,28 @@ INSERT nXsSe3f32
 LOOKUP nXsSe3f32
 END
 LOOKUP nXsSe3f32
+######################
+0
+0
+0
+8
 -----------------------
 Case 18 : test regex
 DOUBLE 319 463
 INSERT z 4
 CALL z('CH ',878,'y','uM')
 CALL z('Q',435,z,z)
-
+######################
+0
+0
+TypeMismatch: CALL z('Q',435,z,z)
+-----------------------
 CASE 19 :
 DOUBLE 495 264
 BEGIN
-
+######################
+UnclosedBlock: 1
+-----------------------
 Case 20 :
 DOUBLE 525 307
 PRINT
@@ -163,7 +264,11 @@ INSERT f
 INSERT f 1
 INSERT a 3
 LOOKUP a
-Case 20 :
+######################
+0
+Redeclared: f
+-----------------------
+Case 21 :
 QUADRATIC 21 705 604
 INSERT z 3
 PRINT
@@ -171,7 +276,13 @@ BEGIN
 BEGIN
 BEGIN
 INSERT z
-Case 21 :
+######################
+0
+11 z//0
+0
+UnclosedBlock: 3
+-----------------------
+Case 22 :
 QUADRATIC 35 809 214
 BEGIN
 END
@@ -180,6 +291,81 @@ ASSIGN zn4z mcba(mcba,mcba,'MW',mcba)
 INSERT wF8BL
 CALL mcba(710,'l Q',wF8BL,'DhF')
 PRINT
-PRINT
+######################
+0
+TypeMismatch: ASSIGN zn4z mcba(mcba,mcba,'MW',mcba)
+-----------------------
+Case 23 : over flow trc hay rede
+LINEAR 2 968
+BEGIN
+INSERT h
+INSERT ha
+INSERT h 2
+END
+######################
+0
+0
+Redeclared: h
+-----------------------
+Case 24 : redec ->overflow->invalid dec hay redec ->invalid dec->overflow
+LINEAR 2 1
+BEGIN
+INSERT x
+INSERT y
+INSERT z 1
+END
+######################
+0
+InvalidDeclaration: z
+-----------------------
+LINEAR 2 1
+BEGIN
+INSERT x
+INSERT y
+INSERT z 1
+END
+-----------------------
+Case 24
+LINEAR 200 616
+INSERT x 4
+ASSIGN x 123
+######################
+0
+TypeMismatch: ASSIGN x 123
+-----------------------
+Case 25
+DOUBLE 247 427
+INSERT x
+INSERT dUwB 2
+ASSIGN x 2
+ASSIGN x dUwB(y,123)
+ASSIGN x dUwB(123,123)
+######################
+0
+0
+0
+Undeclared: y
+-----------------------
+Case 26
+LINEAR 19 7
+INSERT a1
+INSERT b4
+ASSIGN b4 'string'
+INSERT foo 2
+ASSIGN b4 foo(b4,5)
+ASSIGN b4 foo('string',a1)
+######################
+0
+0
+0
+0
+0
+0
 
-
+-----------------------
+Case 27
+LINEAR 19 1
+INSERT
+DOUBLE 4 5 6
+######################
+-----------------------

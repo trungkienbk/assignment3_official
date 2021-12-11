@@ -16,22 +16,20 @@ static int customMod(string str, int m)
 }
 static int linearProbing(string key, int i,int c1,int c2,int m) {
     int temp = customMod(key,m);
-    return ( temp + c1*i) % m;
-    // return ((key % m) + c1*i) % m;
+    long long temp1 = (long long)(temp + c1*i);
+    return temp1%m;
+
 }
 static int quadraticProbing(string  key, int i,int c1,int c2,int m) {
     int temp = customMod(key,m);
-    return (temp  + c1*i + c2*i*i) % m;
-    //return ((key % m)  + c1*i + c2*i*i) % m;
+    long long temp1 = (long long)(temp  + c1*i + c2*i*i);
+    return temp1%m;
 }
 static int doubleHashing(string key, int i,int c1,int c2,int m) {
     int h1 = customMod(key,m);
     int h2 = 1+customMod(key,m-2);
-    return (h1 + c1*i*h2)%m;
-
-    //int h1 = key % m;
-    //    int h2 = 1 + (key % (m-2));
-    //    return (h1 + c1*i*h2) % m;
+    long long temp = (long long) (h1 + c1*i*h2);
+    return temp%m;
 }
 ////////////////////////////////////////////////////////////
 class Symbol{

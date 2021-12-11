@@ -4,18 +4,25 @@ void SymbolTable::run(string filename)
 {
     ifstream f(filename);
     int cur_level=0;
+    int count_linear = 1 ;
     while (!f.eof()){
        // cout<<"Kien dep trai"<<endl;
         string ins;
         getline(f, ins);
         if(regex_match(ins,linear)){
+            if(count_linear > 1) throw InvalidInstruction(ins);
             SetLinear(ins);
+            count_linear++;
         }
         else if(regex_match(ins,quadratic)){
+            if(count_linear > 1) throw InvalidInstruction(ins);
             SetQuadratic(ins);
+            count_linear++;
         }
         else if(regex_match(ins,doublee)){
+            if(count_linear > 1) throw InvalidInstruction(ins);
             SetDouble(ins);
+            count_linear++;
         }
         else if(regex_match(ins,ins_vari)) {     ///// HAM INSERT BIEN
             insert_val(ins,cur_level);
@@ -147,7 +154,7 @@ void SymbolTable::print(string &s) {
     for (int i = 0; i < newHash.size ; i++) {
         if (newHash.status[i] == 1) {
             s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +";";
-         //   s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +"_"+newHash.arr[i].type +"_"+newHash.arr[i].argList+" ;";
+          // s += to_string(i) + " " + newHash.arr[i].name + "//" + to_string(newHash.arr[i].scope) +"_"+newHash.arr[i].type +"_"+newHash.arr[i].argList+" ;";
         }
     }
 }
@@ -192,6 +199,7 @@ void SymbolTable::lookup(string ins, int cur_level) {
     string name;
     int index = ins.find(" ");
     name = ins.substr(index+1);
+    if(isValidId(name) == false) throw InvalidInstruction(ins);
     Symbol check;
     while(cur_level >= 0) {
         Symbol e(name,cur_level);
@@ -235,8 +243,8 @@ void SymbolTable::insert_func(string ins, int cur_level) {
     Symbol e(name,cur_level);
     e.encode = encodeName(name,cur_level);
     Symbol check = isContains(e,cur_level);
-    if(check.name != "null") throw Redeclared(name);
     if(cur_level > 0) throw InvalidDeclaration(name);
+    if(check.name != "null") throw Redeclared(name);
     //if(check.name != "null") throw Redeclared(ins);
     // if(cur_level > 0) throw InvalidDeclaration(ins);
     //  cout<<" thuoc tinh  : c1->"<<c1<<" c2->"<<c2<<" m(size) ->"<<m<<endl;
@@ -257,14 +265,15 @@ void SymbolTable::insert_func(string ins, int cur_level) {
 }
 
 void SymbolTable::call_func(string ins,int cur_level) {
-
+    string ins_tmp="ASSIGN z ";
     int idx = 0;
     int num_step = 0;
     int idx_real;
     string value_func,func_name,argu;
     int space = ins.find(' ');
     value_func = ins.substr(space+1);
-  //  if(isKeyword(value_func)) throw InvalidInstruction(ins);
+    ins_tmp+=value_func;
+   if(isKeyword(ins_tmp)) throw InvalidInstruction(ins);
     check_function(ins,value_func, cur_level,idx,num_step,idx_real);
     if(newHash.arr[idx_real].type == "number" || newHash.arr[idx_real].type == "string" ){
         throw TypeMismatch(ins);
@@ -347,7 +356,8 @@ void SymbolTable::assign_variable(string ins,int cur_level) {
     if(isValidId(value) == false) throw InvalidInstruction(ins);
     Symbol check_val = search(value,cur_level,idx_val,num_step);
     if(check_val.name == "null") throw Undeclared(value);
-    if(check_val.argList != "") throw TypeMismatch(ins);
+  //  if(check_val.argList != "") throw TypeMismatch(ins);//// Code cu
+    if(check_val.argList != "") throw InvalidInstruction(ins);//// Code cu
     Symbol check_id = search(id,cur_level,idx_id,num_step);
     if(check_id.name == "null") throw Undeclared(id);
     if(check_id.argList != "") throw TypeMismatch(ins);
@@ -383,12 +393,6 @@ void SymbolTable::check_function(string ins,string value_func,int cur_level,int 
     if(temp_func.name == "null"){
         throw Undeclared(func_name);
     }
-    /*
-    //////////////////////////////////
-    string tmpforCall = ins.substr(0,4);
-    if(temp_func.type == "void" &&  tmpforCall != "CALL") {
-        throw TypeMismatch(ins); ///////////////////// them day ne
-    }*/
     /////////////////////////////////////
     if(temp_func.argList == "") throw TypeMismatch(ins);
     if(temp_func.type != ""){ //// da co tye, lam nhu asm2
@@ -437,7 +441,6 @@ void SymbolTable::check_function(string ins,string value_func,int cur_level,int 
                 }
                 ++k;
             }
-            ////////
         }
     }
     else { //// Chua co type
@@ -476,8 +479,8 @@ void SymbolTable::check_function(string ins,string value_func,int cur_level,int 
                     if(temp_argu.type =="")  throw TypeCannotBeInferred(ins);
                     else {
                         if(temp_argu.type == "string"){
-                            newHash.arr[idx].argList[k]= 's';
-                        } else newHash.arr[idx].argList[k] = 'n';
+                            newHash.arr[idx_func_real].argList[k]= 's';
+                        } else newHash.arr[idx_func_real].argList[k] = 'n';
                     }
                 }++k;
             }
@@ -485,108 +488,6 @@ void SymbolTable::check_function(string ins,string value_func,int cur_level,int 
     }
     return;
 }
-/*
- void SymbolTable::check_function(string ins,string value_func,int cur_level,int idx,int& num_step,int& idx_func_real) {
-    string func_name,argu;
-    int count_point = 0;
-    int index_par[40];
-    int find_parless = (int)value_func.find('(');
-    func_name = value_func.substr(0,find_parless); //// Name of function
-    argu = value_func.substr(find_parless); //// List argument; ex: (1,'234)
-    Symbol temp_func = search(func_name,cur_level,idx,num_step);
-    idx_func_real = idx;
-    if(temp_func.name == "null"){
-        throw Undeclared(func_name);
-    }
-    if(temp_func.argList == "") throw TypeMismatch(ins);
-    if(temp_func.type != ""){ //// da co tye, lam nhu asm2
-        if(temp_func.argList.length() == 1){ //// No argument
-            //// CHECK DIEU KIEN TYPE CUA HAM RONG
-            if(argu.length() > 2 ) throw TypeMismatch(ins);
-        }
-        else
-        {
-            for(char i : argu){
-                if(i == ','){
-                    count_point++;
-                }
-            }
-            if(count_point + 2 != (int) temp_func.argList.length()) throw TypeMismatch(ins);
-            count_point = 0;
-            for(int i = 0 ;i<(int) argu.length();++i){
-                if(argu[i] == '(' ||argu[i] == ')' ||argu[i] == ','){
-                    index_par[count_point] = i;
-                    count_point++;
-                }
-            }
-            int k = 0;
-            for(int i = 0 ; i< count_point-1;++i){
-                string temp = argu.substr(index_par[i]+1,index_par[i+1]-index_par[i]-1);
-                if(temp[0]>='0'  &&temp[0]<='9'){
-                    if(temp_func.argList[k] != 'n') throw TypeMismatch(ins);
-                }
-                else if(temp[0]=='\''){
-                    if(temp_func.argList[k] != 's') throw TypeMismatch(ins);
-                }
-                else {
-                    Symbol temp_argu = search(temp,cur_level,idx,num_step);
-                    if(temp_argu.name == "null") throw Undeclared(temp); /// ko thay ten
-                    if(temp_argu.argList !="") throw TypeMismatch(ins);/// truyen ham
-                    if(temp_argu.type =="number" && temp_func.argList[k]=='s') throw TypeMismatch(ins);
-                    if(temp_argu.type =="string" && temp_func.argList[k]=='n') throw TypeMismatch(ins);
-                    if(temp_argu.type =="")  throw TypeCannotBeInfered(ins);
-                }
-                ++k;
-            }
-            ////////
-        }
-    }
-    else {
-        if(temp_func.argList.length() == 1){ //// No argument
-            //// CHECK DIEU KIEN TYPE CUA HAM RONG
-            if(argu.length() > 2 ) throw TypeMismatch(ins);
-        }
-        else {
-            for(char i : argu){
-                if(i == ','){
-                    count_point++;
-                }
-            }
-            if(count_point + 2 != (int) temp_func.argList.length()) throw TypeMismatch(ins);
-            count_point = 0;
-            for(int i = 0 ;i<(int) argu.length();++i){
-                if(argu[i] == '(' ||argu[i] == ')' ||argu[i] == ','){
-                    index_par[count_point] = i;
-                    count_point++;
-                }
-            }
-            int k = 0;
-            for(int i = 0 ; i< count_point-1;++i){
-                string temp = argu.substr(index_par[i]+1,index_par[i+1]-index_par[i]-1);
-                if(temp[0]>='0'  &&temp[0]<='9'){
-                    newHash.arr[idx].argList[k] = 'n';
-                }
-                else if(temp[0]=='\''){
-                    newHash.arr[idx].argList[k]= 's';
-                }
-                else {
-                    Symbol temp_argu = search(temp,cur_level,idx,num_step);
-                    if(temp_argu.name == "null") throw Undeclared(temp); /// ko thay ten
-                    if(temp_argu.argList !="") throw TypeMismatch(ins);/// truyen ham
-                    if(temp_argu.type =="")  throw TypeCannotBeInfered(ins);
-                    else {
-                        if(temp_argu.type == "string"){
-                            newHash.arr[idx].argList[k]= 's';
-                        } else newHash.arr[idx].argList[k] = 'n';
-                    }
-                }++k;
-            }
-        }
-    }
-    return;
-}
- */
-
 void SymbolTable::assign_function(string ins, int cur_level) {
     if(isKeyword(ins)) throw InvalidInstruction(ins);
     string value_func,id;
@@ -609,6 +510,7 @@ void SymbolTable::assign_function(string ins, int cur_level) {
     // cout<<"sau khi goi cccc function "<<num_step<<endl;
     check_function(ins,value_func,cur_level,idx_func_fake,num_step,idx_func);
     // cout<<"sau khi goi check function "<<num_step<<endl;
+    if(newHash.arr[idx_func].type == "void") throw TypeMismatch(ins);
     Symbol check_id = search(id,cur_level,idx_var,num_step);
     //    cout<<"sau khi goi id "<<num_step<<endl;
     // cout<<"indexx ne " << "func : "<<idx_func<<"_"<<newHash.arr[idx_func].name<<"      var : "<<idx_var<<"_"<<newHash.arr[idx_var].name<<endl;
@@ -625,7 +527,6 @@ void SymbolTable::assign_function(string ins, int cur_level) {
         if(newHash.arr[idx_var].type !=newHash.arr[idx_func].type )
             throw TypeMismatch(ins);
     }
-
     if(newHash.arr[idx_var].type == "" && newHash.arr[idx_func].type != ""){
         newHash.arr[idx_var].type=newHash.arr[idx_func].type;
     }
@@ -650,7 +551,6 @@ bool SymbolTable::isKeyword(const string &ins) {
     if(valu[valu.size()-1]==')') {
         size_t posi_S = 0;
         size_t posi_E = valu.find('(');
-
         string funcIden = valu.substr(posi_S, posi_E);
         if(!isValidId(funcIden)) return true;
 
@@ -667,12 +567,9 @@ bool SymbolTable::isKeyword(const string &ins) {
             string argu_name = valu.substr(posi_S, valu.size() - posi_S - 1);
             if(!isValidId(argu_name)) return true;
         }
-
     } else {
         if(!isValidId(valu)) return true;
     }
     return false;
 }
-
-
 

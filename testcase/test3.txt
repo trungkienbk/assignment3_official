@@ -1,8 +1,142 @@
+
+Case 1:
+LINEAR 19 1
+INSERT x 2
+INSERT y
+ASSIGN y 1
+INSERT z
+ASSIGN z 'cc'
+INSERT t
+CALL x(1,'abc')
+ASSIGN t x(y,z)
+######################
+0
+0
+0
+0
+0
+0
+0
+TypeMismatch: ASSIGN t x(y,z)
+-----------------------
+Case 2 :
+LINEAR 19 1
+INSERT x 2
+INSERT y
+BEGIN
+INSERT x
+ASSIGN x 1
+ASSIGN y 'abc'
+ASSIGN x x(x,y)
+PRINT
+END
+ASSIGN x x(x,y)
+PRINT
+######################
+0
+0
+0
+0
+0
+TypeMismatch: ASSIGN x x(x,y)
+-----------------------
+Case 3 :
+LINEAR 19 1
+INSERT x 2
+ASSIGN x(1,string)
+######################
+0
+Invalid: ASSIGN x(1,string)
+-----------------------
+Case 4 : goi ham ko co bien
+LINEAR 19 1
+INSERT x 0
+CALL x()
+######################
+0
+0
+-----------------------
+Case 5 :
+LINEAR 19 1
+INSERT x 0
+BEGIN
+INSERT x 1
+CALL x()
+END
+######################
+0
+InvalidDeclaration: x
+-----------------------
+Case 6 :
 LINEAR 19 1
 INSERT x
-INSERT sum 2
-ASSIGN x 1
-ASSIGN x sum(5,x)
-INSERT z
-INSERT foo 1
-ASSIGN z foo('abc')
+ASSIGN x 102
+ASSIGN y 10
+ASSIGN x y(x,x,x,x,x,x,x,x,x,x)
+END
+######################
+0
+0
+Undeclared: y
+-----------------------
+Case 7 :
+LINEAR 19 1
+INSERT x
+ASSIGN x 102
+INSERT y 10
+ASSIGN x y(x,x,x,x,x,x,x,x,x,x)
+END
+######################
+0
+0
+0
+0
+UnknownBlock
+-----------------------
+Case 8 :
+LINEAR 19 1
+INSERT x
+INSERT xy
+INSERT f 4
+INSERT y
+ASSIGN y 2
+ASSIGN y f(1,1,1,1)
+ASSIGN y f(xy,xy,xy,x)
+ASSIGN x ''
+######################
+0
+1
+1
+2
+2
+3
+6
+TypeMismatch: ASSIGN x ''
+-----------------------
+Case 9 :
+LINEAR 19 1
+INSERT x 2
+INSERT y
+ASSIGN y 1
+CALL x(1,1)
+ASSIGN y x(z,1)
+######################
+0
+0
+0
+0
+Undeclared: z
+-----------------------
+Case 10 :
+LINEAR 19 1
+BEGIN
+INSERT x
+INSERT x 2
+END
+######################
+LINEAR 19 1
+BEGIN
+INSERT x
+INSERT x 2
+END
+-----------------------
